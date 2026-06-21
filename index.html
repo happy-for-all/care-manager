@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="ケアマネージャー・医療ソーシャルワーカー向け、全国の訪問介護・看護・ショートステイ等を「現在地から近い順」に探せる無料GPS検索ポータル。現場の業務効率化をサポートします。">
-    
-    <meta name="robots" content="noindex, nofollow">
 
     <!-- 👑 【修正】問題4: httpsに変更 -->
     <link rel="canonical" href="https://for-welfare.pray-power-is-god-and-cocoro.com/care-manager/">
@@ -137,7 +135,7 @@
             <button class="btn-gps" onclick="sortByGPS()">📍 現在地（出先）から近い順に探す</button>
 
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 25px 0;">
-            <h3 style="font-size: 1rem; color: var(--text-main); margin-top: 0;">住所・郵便番号・施設名で絞り込む</h3>
+            <h3 style="font-size: 1rem; color: var(--text-main); margin-top: 0;">住所・施設名などで絞り込む</h3>
             <input type="text" id="searchInput" class="search-input" placeholder="例：東大阪市、577-0000 など" onkeypress="handleEnter(event)">
             <button class="btn-search" onclick="searchByKeyword()">🔍 検索する</button>
         </div>
@@ -148,7 +146,6 @@
         </div>
 
         <!-- 👑 TODO: アドセンス本番運用時にコメントアウトを外す -->
-        <!--
         <div class="adsense-container" style="text-align: center; margin: 40px 0; min-height: 250px;">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2908004621823900" crossorigin="anonymous"></script>
             <ins class="adsbygoogle"
@@ -159,7 +156,6 @@
                  (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
         </div>
-        -->
 
         <div id="dataDate" style="text-align:center; font-size:0.85rem; font-weight:bold; color:var(--text-sub); margin-top:30px; margin-bottom:30px;"></div>
 
@@ -173,6 +169,19 @@
         </div>
     </div>
 
+        <!-- 👑 TODO: アドセンス本番運用時にコメントアウトを外す -->
+        <div class="adsense-container" style="text-align: center; margin: 40px 0; min-height: 250px;">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2908004621823900" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:300px;height:250px"
+                 data-ad-client="ca-pub-2908004621823900"
+                 data-ad-slot="3799886389"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+    
     <button id="btnTop" class="btn-top" onclick="scrollToTop()">↑</button>
 
     <script>
