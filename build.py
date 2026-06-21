@@ -2,7 +2,6 @@ import os
 import json
 import sys
 import zipfile
-import io
 import re
 import pandas as pd
 import unicodedata
@@ -11,62 +10,37 @@ import shutil
 import datetime
 
 # ==========================================
-# 👑 まごころケアマネ支援ナビ: 自動ビルドエンジン (Ver ハイブリッド)
+# 👑 まごころケアマネ支援ナビ: 自動ビルドエンジン (Ver ハイブリッド・CSV直接対応・住所バグ完全修正版)
 # 開発者: ちゃろ ＆ AIバディ
 # 理念: HFA (Happy for All)
 # ==========================================
 
-COORD_OVERRIDES = {
-    # 必要に応じて補正座標を追加
-}
+COORD_OVERRIDES = {}
 
 PREFECTURE_OFFICES = {
-    "北海道": {"slug": "hokkaido", "lat": 43.0642, "lon": 141.3469},
-    "青森県": {"slug": "aomori", "lat": 40.8244, "lon": 140.7400},
-    "岩手県": {"slug": "iwate", "lat": 39.7036, "lon": 141.1527},
-    "宮城県": {"slug": "miyagi", "lat": 38.2682, "lon": 140.8721},
-    "秋田県": {"slug": "akita", "lat": 39.7186, "lon": 140.1024},
-    "山形県": {"slug": "yamagata", "lat": 38.2404, "lon": 140.3633},
-    "福島県": {"slug": "fukushima", "lat": 37.7503, "lon": 140.4676},
-    "茨城県": {"slug": "ibaraki", "lat": 36.3418, "lon": 140.4468},
-    "栃木県": {"slug": "tochigi", "lat": 36.5657, "lon": 139.8836},
-    "群馬県": {"slug": "gunma", "lat": 36.3911, "lon": 139.0608},
-    "埼玉県": {"slug": "saitama", "lat": 35.8569, "lon": 139.6489},
-    "千葉県": {"slug": "chiba", "lat": 35.6047, "lon": 140.1232},
-    "東京都": {"slug": "tokyo", "lat": 35.6895, "lon": 139.6917},
-    "神奈川県": {"slug": "kanagawa", "lat": 35.4478, "lon": 139.6425},
-    "新潟県": {"slug": "niigata", "lat": 37.9026, "lon": 139.0232},
-    "富山県": {"slug": "toyama", "lat": 36.6953, "lon": 137.2113},
-    "石川県": {"slug": "ishikawa", "lat": 36.5947, "lon": 136.6256},
-    "福井県": {"slug": "fukui", "lat": 36.0652, "lon": 136.2216},
-    "山梨県": {"slug": "yamanashi", "lat": 35.6642, "lon": 138.5685},
-    "長野県": {"slug": "nagano", "lat": 36.6513, "lon": 138.1810},
-    "岐阜県": {"slug": "gifu", "lat": 35.3912, "lon": 136.7223},
-    "静岡県": {"slug": "shizuoka", "lat": 34.9769, "lon": 138.3831},
-    "愛知県": {"slug": "aichi", "lat": 35.1802, "lon": 136.9066},
-    "三重県": {"slug": "mie", "lat": 34.7303, "lon": 136.5086},
-    "滋賀県": {"slug": "shiga", "lat": 35.0045, "lon": 135.8686},
-    "京都府": {"slug": "kyoto", "lat": 35.0210, "lon": 135.7556},
-    "大阪府": {"slug": "osaka", "lat": 34.6862, "lon": 135.5201},
-    "兵庫県": {"slug": "hyogo", "lat": 34.6913, "lon": 135.1830},
-    "奈良県": {"slug": "nara", "lat": 34.6853, "lon": 135.8327},
-    "和歌山県": {"slug": "wakayama", "lat": 34.2260, "lon": 135.1675},
-    "鳥取県": {"slug": "tottori", "lat": 35.5039, "lon": 134.2378},
-    "島根県": {"slug": "shimane", "lat": 35.4723, "lon": 133.0505},
-    "岡山県": {"slug": "okayama", "lat": 34.6618, "lon": 133.9344},
-    "広島県": {"slug": "hiroshima", "lat": 34.3966, "lon": 132.4596},
-    "山口県": {"slug": "yamaguchi", "lat": 34.1859, "lon": 131.4714},
-    "徳島県": {"slug": "tokushima", "lat": 34.0658, "lon": 134.5593},
-    "香川県": {"slug": "kagawa", "lat": 34.3401, "lon": 134.0434},
-    "愛媛県": {"slug": "ehime", "lat": 33.8417, "lon": 132.7661},
-    "高知県": {"slug": "kochi", "lat": 33.5597, "lon": 133.5311},
-    "福岡県": {"slug": "fukuoka", "lat": 33.6064, "lon": 130.4181},
-    "佐賀県": {"slug": "saga", "lat": 33.2494, "lon": 130.2988},
-    "長崎県": {"slug": "nagasaki", "lat": 32.7448, "lon": 129.8737},
-    "熊本県": {"slug": "kumamoto", "lat": 32.7898, "lon": 130.7417},
-    "大分県": {"slug": "oita", "lat": 33.2382, "lon": 131.6126},
-    "宮崎県": {"slug": "miyazaki", "lat": 31.9111, "lon": 131.4239},
-    "鹿児島県": {"slug": "kagoshima", "lat": 31.5602, "lon": 130.5581},
+    "北海道": {"slug": "hokkaido", "lat": 43.0642, "lon": 141.3469}, "青森県": {"slug": "aomori", "lat": 40.8244, "lon": 140.7400},
+    "岩手県": {"slug": "iwate", "lat": 39.7036, "lon": 141.1527}, "宮城県": {"slug": "miyagi", "lat": 38.2682, "lon": 140.8721},
+    "秋田県": {"slug": "akita", "lat": 39.7186, "lon": 140.1024}, "山形県": {"slug": "yamagata", "lat": 38.2404, "lon": 140.3633},
+    "福島県": {"slug": "fukushima", "lat": 37.7503, "lon": 140.4676}, "茨城県": {"slug": "ibaraki", "lat": 36.3418, "lon": 140.4468},
+    "栃木県": {"slug": "tochigi", "lat": 36.5657, "lon": 139.8836}, "群馬県": {"slug": "gunma", "lat": 36.3911, "lon": 139.0608},
+    "埼玉県": {"slug": "saitama", "lat": 35.8569, "lon": 139.6489}, "千葉県": {"slug": "chiba", "lat": 35.6047, "lon": 140.1232},
+    "東京都": {"slug": "tokyo", "lat": 35.6895, "lon": 139.6917}, "神奈川県": {"slug": "kanagawa", "lat": 35.4478, "lon": 139.6425},
+    "新潟県": {"slug": "niigata", "lat": 37.9026, "lon": 139.0232}, "富山県": {"slug": "toyama", "lat": 36.6953, "lon": 137.2113},
+    "石川県": {"slug": "ishikawa", "lat": 36.5947, "lon": 136.6256}, "福井県": {"slug": "fukui", "lat": 36.0652, "lon": 136.2216},
+    "山梨県": {"slug": "yamanashi", "lat": 35.6642, "lon": 138.5685}, "長野県": {"slug": "nagano", "lat": 36.6513, "lon": 138.1810},
+    "岐阜県": {"slug": "gifu", "lat": 35.3912, "lon": 136.7223}, "静岡県": {"slug": "shizuoka", "lat": 34.9769, "lon": 138.3831},
+    "愛知県": {"slug": "aichi", "lat": 35.1802, "lon": 136.9066}, "三重県": {"slug": "mie", "lat": 34.7303, "lon": 136.5086},
+    "滋賀県": {"slug": "shiga", "lat": 35.0045, "lon": 135.8686}, "京都府": {"slug": "kyoto", "lat": 35.0210, "lon": 135.7556},
+    "大阪府": {"slug": "osaka", "lat": 34.6862, "lon": 135.5201}, "兵庫県": {"slug": "hyogo", "lat": 34.6913, "lon": 135.1830},
+    "奈良県": {"slug": "nara", "lat": 34.6853, "lon": 135.8327}, "和歌山県": {"slug": "wakayama", "lat": 34.2260, "lon": 135.1675},
+    "鳥取県": {"slug": "tottori", "lat": 35.5039, "lon": 134.2378}, "島根県": {"slug": "shimane", "lat": 35.4723, "lon": 133.0505},
+    "岡山県": {"slug": "okayama", "lat": 34.6618, "lon": 133.9344}, "広島県": {"slug": "hiroshima", "lat": 34.3966, "lon": 132.4596},
+    "山口県": {"slug": "yamaguchi", "lat": 34.1859, "lon": 131.4714}, "徳島県": {"slug": "tokushima", "lat": 34.0658, "lon": 134.5593},
+    "香川県": {"slug": "kagawa", "lat": 34.3401, "lon": 134.0434}, "愛媛県": {"slug": "ehime", "lat": 33.8417, "lon": 132.7661},
+    "高知県": {"slug": "kochi", "lat": 33.5597, "lon": 133.5311}, "福岡県": {"slug": "fukuoka", "lat": 33.6064, "lon": 130.4181},
+    "佐賀県": {"slug": "saga", "lat": 33.2494, "lon": 130.2988}, "長崎県": {"slug": "nagasaki", "lat": 32.7448, "lon": 129.8737},
+    "熊本県": {"slug": "kumamoto", "lat": 32.7898, "lon": 130.7417}, "大分県": {"slug": "oita", "lat": 33.2382, "lon": 131.6126},
+    "宮崎県": {"slug": "miyazaki", "lat": 31.9111, "lon": 131.4239}, "鹿児島県": {"slug": "kagoshima", "lat": 31.5602, "lon": 130.5581},
     "沖縄県": {"slug": "okinawa", "lat": 26.2124, "lon": 127.6809},
 }
 
@@ -79,27 +53,27 @@ MUNICIPAL_COORDS = {
 
 SERVICE_DEFINITIONS = [
     {
-        "zip_file": "houmon_kaigo_placeholder.zip", 
+        "file_name": "110_houmon_kaigo.csv", 
         "service_name": "訪問介護",
         "output_key": "houmon_kaigo",
     },
     {
-        "zip_file": "houmon_kango_placeholder.zip",
+        "file_name": "130_houmon_kango.csv",
         "service_name": "訪問看護",
         "output_key": "houmon_kango",
     },
     {
-        "zip_file": "fukushi_yogu_placeholder.zip",
+        "file_name": "170_fukushi_yogu.csv",
         "service_name": "福祉用具貸与",
         "output_key": "fukushi_yogu",
     },
     {
-        "zip_file": "short_stay_placeholder.zip",
+        "file_name": "210_short_stay.csv",
         "service_name": "短期入所生活介護",
         "output_key": "short_stay",
     },
     {
-        "zip_file": "kyotaku_placeholder.zip",
+        "file_name": "430_kyotaku.csv",
         "service_name": "居宅介護支援",
         "output_key": "kyotaku",
     }
@@ -167,88 +141,113 @@ def run_build():
     manifest["built_at"] = datetime.datetime.now().strftime("%Y年%m月%d日")
 
     for srv_def in SERVICE_DEFINITIONS:
-        zip_file_path = srv_def["zip_file"]
+        file_name = srv_def["file_name"]
         service_name = srv_def["service_name"]
         output_key = srv_def["output_key"]
         
-        print(f"\n📡 処理開始: 【{service_name}】 (ファイル: {zip_file_path})")
+        print(f"\n📡 処理開始: 【{service_name}】 (ファイル: {file_name})")
 
-        if not os.path.exists(zip_file_path):
-            print(f"⚠️ [警告] 『{zip_file_path}』が見つかりません。スキップします。")
-            continue
+        actual_file_path = file_name
+        if not os.path.exists(actual_file_path):
+            alt_file_path = file_name.replace('.csv', '.zip')
+            if os.path.exists(alt_file_path):
+                actual_file_path = alt_file_path
+            else:
+                print(f"⚠️ [警告] 『{file_name}』が見つかりません。スキップします。")
+                continue
 
         df = None
+        encodings = ["utf-8-sig", "shift_jis", "cp932", "utf-8"]
+        
         try:
-            with zipfile.ZipFile(zip_file_path) as zip_file:
-                csv_files = [f for f in zip_file.namelist() if f.lower().endswith('.csv') and not f.startswith('__MACOSX')]
-                if not csv_files:
-                    raise Exception("CSVファイルが見つかりません。")
-                if len(csv_files) > 1:
-                    csv_filename = max(csv_files, key=lambda f: zip_file.getinfo(f).file_size)
-                else:
-                    csv_filename = csv_files[0]
-                encodings = ["utf-8-sig", "shift_jis", "cp932", "utf-8"]
+            if actual_file_path.endswith('.zip'):
+                with zipfile.ZipFile(actual_file_path) as zip_file:
+                    csv_files = [f for f in zip_file.namelist() if f.lower().endswith('.csv') and not f.startswith('__MACOSX')]
+                    if csv_files:
+                        csv_filename = max(csv_files, key=lambda f: zip_file.getinfo(f).file_size)
+                        for enc in encodings:
+                            try:
+                                with zip_file.open(csv_filename) as f:
+                                    df = pd.read_csv(f, encoding=enc, dtype=str)
+                                break
+                            except Exception:
+                                continue
+            else:
                 for enc in encodings:
                     try:
-                        with zip_file.open(csv_filename) as f:
-                            df = pd.read_csv(f, encoding=enc, dtype=str)
+                        df = pd.read_csv(actual_file_path, encoding=enc, dtype=str)
                         break
                     except Exception:
                         continue
         except Exception as e:
-            print(f"❌ ZIP解凍エラー ({service_name}): {e}")
+            print(f"❌ 読込エラー ({service_name}): {e}")
             continue
 
         if df is None:
-            print(f"❌ CSV読込失敗 ({service_name})。スキップします。")
+            print(f"❌ CSVデータ変換失敗 ({service_name})。スキップします。")
             continue
 
         df.columns = df.columns.str.strip().str.replace('\n', '').str.replace('\r', '')
 
         col_address_city = [col for col in df.columns if "事業所" in col and "住所" in col and "市区町村" in col]
         if not col_address_city:
-            print(f"❌ 事業所住所（市区町村）列が見つかりません ({service_name})。スキップします。")
-            continue
-        target_col = col_address_city[0]
+            if "市区町村名" in df.columns:
+                target_col = "市区町村名"
+            else:
+                print(f"❌ 市区町村の列が見つかりません ({service_name})。スキップします。")
+                continue
+        else:
+            target_col = col_address_city[0]
 
         target_prefectures = tuple(PREFECTURE_OFFICES.keys())
-        df_filtered = df[df[target_col].astype(str).str.strip().str.startswith(target_prefectures, na=False)].copy()
+        if "都道府県名" in df.columns:
+            df_filtered = df[df["都道府県名"].astype(str).str.strip().str.startswith(target_prefectures, na=False)].copy()
+        else:
+            df_filtered = df[df[target_col].astype(str).str.strip().str.startswith(target_prefectures, na=False)].copy()
         
         facilities = []
         
         for _, row in df_filtered.iterrows():
-            name = safe_get(row, ["事業所の名称", "事業所名称"])
-            name_kana = safe_get(row, ["事業所の名称_かな", "事業所名称_かな", "フリガナ", "ふりがな"])
+            name = safe_get(row, ["事業所の名称", "事業所名称", "事業所名"])
+            name_kana = safe_get(row, ["事業所の名称_かな", "事業所名称_かな", "事業所名カナ", "フリガナ", "ふりがな"])
             
+            pref_name = safe_get(row, ["都道府県名"])
+            city = safe_get(row, ["市区町村名", "事業所住所（市区町村）", "事業所住所(市区町村)", target_col])
+            address_detail = safe_get(row, ["住所", "事業所住所（番地以降）", "事業所住所(番地以降)"])
+            building_name = safe_get(row, ["方書（ビル名等）"])
+
+            if address_detail and len(address_detail) > len(city):
+                address = address_detail
+            else:
+                address = (pref_name or "") + city + address_detail
+
+            if building_name and building_name not in address:
+                address += " " + building_name
+
             postal_code = safe_get(row, ["事業所郵便番号", "郵便番号"])
+            if not postal_code:
+                postal_match = re.search(r'(?:〒)?([0-9]{3}-?[0-9]{4})', address_detail)
+                if postal_match:
+                    postal_code = postal_match.group(1)
+
             if postal_code:
                 postal_code = re.sub(r'[^0-9\-]', '', postal_code)
 
-            city = safe_get(row, ["事業所住所（市区町村）", "事業所住所(市区町村)", target_col])
-            address_detail = safe_get(row, ["事業所住所（番地以降）", "事業所住所(番地以降)"])
-            
-            address_detail_normalized = unicodedata.normalize('NFKC', address_detail)
-            if not re.search(r'[0-9]', address_detail_normalized) or len(address_detail_normalized) <= 2:
-                address_detail = ""
-                
-            address = city + address_detail
-
             raw_tel = safe_get(row, ["事業所電話番号", "事業所連絡先", "電話番号"])
-            # 👑 【修正】問題3: 空文字の安全な処理
             tel_clean = re.sub(r'[^0-9\-]', '', raw_tel.translate(str.maketrans('０１２３４５６７８９', '0123456789'))) if raw_tel else ""
 
             raw_lat = safe_get(row, ["事業所緯度", "緯度"])
             raw_lon = safe_get(row, ["事業所経度", "経度"])
             
-            raw_url_text = safe_get(row, ["事業所URL", "事業所ＵＲＬ", "ホームページ", "ホームページアドレス", "法人URL"])
+            raw_url_text = safe_get(row, ["事業所URL", "事業所ＵＲＬ", "ホームページ", "ホームページアドレス", "法人URL", "URL"])
             clean_url = extract_clean_url(raw_url_text)
             
-            time_weekday = safe_get(row, ["利用可能な時間帯（平日）"])
+            time_weekday = safe_get(row, ["利用可能な時間帯（平日）", "利用可能曜日"])
             time_saturday = safe_get(row, ["利用可能な時間帯（土曜）"])
             time_sunday = safe_get(row, ["利用可能な時間帯（日曜）"])
             time_holiday = safe_get(row, ["利用可能な時間帯（祝日）"])
             day_off = safe_get(row, ["定休日"])
-            notes = safe_get(row, ["利用可能曜日特記事項（留意事項）"])
+            notes = safe_get(row, ["利用可能曜日特記事項（留意事項）", "利用可能曜日特記事項"])
             capacity = safe_get(row, ["定員"])
 
             lat, lon = None, None
@@ -265,7 +264,9 @@ def run_build():
                 
             if lat is None or lon is None:
                 is_approximate = True
-                detected_pref = detect_prefecture_key(city)
+                
+                full_address_for_pref = (pref_name or "") + city
+                detected_pref = detect_prefecture_key(full_address_for_pref)
                 matched_pref_len = len(detected_pref) if detected_pref else 0
 
                 detected_city = None
@@ -289,10 +290,12 @@ def run_build():
                 lon = COORD_OVERRIDES[name]["lon"]
                 is_approximate = False
             
+            # 👑 【修正】都道府県判定の確実なフォールバック用として pref_name を追加
             facilities.append({
                 "name": name,
                 "name_kana": name_kana,
                 "service_type": service_name,
+                "pref_name": pref_name,     # ← ココを追加
                 "postal_code": postal_code, 
                 "address": address,
                 "map_address": extract_map_address(address),
@@ -311,9 +314,12 @@ def run_build():
                 "capacity": capacity
             })
 
+        # 👑 【修正】住所から判定できない場合、pref_name から判定する
         facilities_by_pref = {}
         for fac in facilities:
-            pref_key = detect_prefecture_key(fac["address"]) or "不明"
+            pref_key = detect_prefecture_key(fac["address"])
+            if not pref_key:
+                pref_key = detect_prefecture_key(fac.get("pref_name", "")) or "不明"
             facilities_by_pref.setdefault(pref_key, []).append(fac)
 
         manifest_for_service = {}
