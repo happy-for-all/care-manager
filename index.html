@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ケアマネージャー・医療ソーシャルワーカー向け、全国の訪問介護・看護・ショートステイ等を「現在地から近い順」に探せる無料GPS検索ポータル。現場の業務効率化をサポートします。">
+    
+    <!-- 👑 サイト確認中のため noindex を追加 -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="canonical" href="http://for-welfare.pray-power-is-god-and-cocoro.com/care-manager/">
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%270.9em%27%20font-size%3D%2790%27%3E%F0%9F%8F%A5%3C%2Ftext%3E%3C%2Fsvg%3E">
+    <title>まごころケアマネ支援ナビ（GPS横断検索）</title>
+
+<!-- Google tag (gtag.js) 👑 TODO: 後で本番のIDに変更してください -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+
+    <style>
+        :root {
+            --bg-color: #f0fdf4;
+            --main-green: #059669;
+            --main-blue: #2563eb;
+            --main-orange: #d97706;
+            --main-purple: #7c3aed;
+            --main-teal: #0d9488;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+        }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 0; padding: 0; line-height: 1.6; }
+        .header { background-color: var(--main-green); color: white; text-align: center; padding: 18px 10px; font-weight: bold; font-size: 1.2rem; margin: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px 15px; }
+        .disclaimer { background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; border: 1px solid #ffeeba; }
+        
+        .pro-settings { display: block; background: #ffffff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .checkbox-label { display: flex; align-items: center; font-size: 0.95rem; cursor: pointer; color: var(--text-main); }
+        .checkbox-label input { margin-right: 8px; transform: scale(1.2); }
+
+        .search-box { background: var(--card-bg); padding: 25px 20px; border-radius: 12px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        .search-input { width: 100%; padding: 12px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
+        .btn-search { background-color: #4b5563; color: white; border: none; padding: 12px 20px; font-size: 1rem; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; margin-bottom: 15px; }
+        .btn-gps { background-color: var(--main-green); color: white; border: none; padding: 15px 20px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; width: 100%; cursor: pointer; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.25); }
+        .btn-csv { background-color: #f59e0b; color: white; border: none; padding: 10px 15px; font-size: 0.9rem; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 5px;}
+        
+        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border: 1px solid var(--border-color); position: relative; }
+        .card h3 { margin: 10px 0; font-size: 1.15rem; color: var(--text-main); }
+        .card p { margin: 6px 0; font-size: 0.95rem; color: var(--text-main); }
+        .tel-link { color: var(--main-green); font-weight: bold; text-decoration: none; display: inline-block; padding: 5px 0; }
+        
+        .distance-badge { display: inline-block; background-color: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; }
+        .approx-note { font-size: 0.75rem; color: #dc2626; margin-top: 4px; display: block; }
+
+        .service-tag { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white; margin-bottom: 10px; }
+        .tag-houmon-kaigo { background-color: var(--main-blue); }
+        .tag-houmon-kango { background-color: #e84393; }
+        .tag-fukushi-yogu { background-color: var(--main-orange); }
+        .tag-short-stay { background-color: var(--main-purple); }
+        .tag-kyotaku { background-color: var(--main-teal); }
+
+        details.facility-details { margin-top: 15px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; }
+        details.facility-details summary { cursor: pointer; color: #0284c7; font-weight: bold; font-size: 0.9rem; list-style: none; display: flex; align-items: center; justify-content: center; }
+        details.facility-details summary::-webkit-details-marker { display: none; }
+        .detail-content { margin-top: 12px; font-size: 0.85rem; color: var(--text-main); line-height: 1.6; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
+
+        .btn-more { background-color: #ffffff; color: var(--main-green); border: 2px solid var(--main-green); padding: 12px 20px; font-size: 1rem; font-weight: bold; border-radius: 30px; width: 100%; cursor: pointer; margin-top: 10px; }
+        .btn-top { position: fixed; bottom: 20px; right: 20px; background-color: var(--main-green); color: white; width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 1000; }
+        
+        /* 👑 お気に入りボタンのホバーエフェクト */
+        .fav-btn { transition: transform 0.2s; }
+        .fav-btn:active { transform: scale(1.3); }
+    </style>
+</head>
+<body>
+
+    <h1 class="header">🏥 まごころケアマネ支援ナビ<br>（訪問・居宅系 複数横断）</h1>
+
+    <div class="container">
+        <div class="disclaimer">
+            <strong>【プロ向け・業務支援ツール】</strong><br>
+            担当する患者様・利用者様の「ご自宅」から近い訪問系サービスやショートステイを、横断してGPS検索できます。※距離ソートを利用するには端末の位置情報をONにしてください。
+        </div>
+
+        <button class="btn-csv" onclick="exportFavoritesToCSV()">⭐ お気に入り施設をCSV出力する（Excel用）</button>
+
+        <div id="proSettings" class="pro-settings">
+            <div style="font-size: 0.95rem; color: var(--text-main); font-weight: bold; margin-bottom: 10px;">
+                🔍 探したいサービスを選択
+            </div>
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chk-houmon-kaigo" value="data_houmon_kaigo.json" checked> 🏷️ 訪問介護（ヘルパー）
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chk-houmon-kango" value="data_houmon_kango.json" checked> 🏷️ 訪問看護
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chk-fukushi-yogu" value="data_fukushi_yogu.json"> 🏷️ 福祉用具貸与
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chk-short-stay" value="data_short_stay.json"> 🏷️ 短期入所生活介護（ショートステイ）
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chk-kyotaku" value="data_kyotaku.json"> 🏷️ 居宅介護支援
+                </label>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <h2 style="margin-top: 0; font-size: 1.15rem; line-height: 1.4;">利用者宅から近い<br>事業所を探す</h2>
+
+            <select id="prefSelect" class="search-input" style="margin-bottom: 15px;">
+                <option value="">都道府県を選択（GPSなら自動入力されます）</option>
+            </select>
+
+            <!-- 👑 【神アドオン】距離での絞り込みプルダウン -->
+            <select id="radiusSelect" class="search-input" style="margin-bottom: 20px;" onchange="applyGPSFilter()">
+                <option value="0">距離で絞り込む（すべて表示）</option>
+                <option value="3">📍 3km 以内</option>
+                <option value="5">📍 5km 以内</option>
+                <option value="10">📍 10km 以内</option>
+            </select>
+
+            <button class="btn-gps" onclick="sortByGPS()">📍 現在地（出先）から近い順に探す</button>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 25px 0;">
+            <h3 style="font-size: 1rem; color: var(--text-main); margin-top: 0;">住所・郵便番号・施設名で絞り込む</h3>
+            <input type="text" id="searchInput" class="search-input" placeholder="例：東大阪市、577-0000 など" onkeypress="handleEnter(event)">
+            <button class="btn-search" onclick="searchByKeyword()">🔍 検索する</button>
+        </div>
+
+        <div id="results"></div>
+        <div id="moreContainer" style="text-align: center; display: none;">
+            <button class="btn-more" onclick="showMore()">もっと見る ＋</button>
+        </div>
+
+        <!-- 👑 TODO: アドセンス本番運用時にコメントアウトを外す -->
+        <!--
+        <div class="adsense-container" style="text-align: center; margin: 40px 0; min-height: 250px;">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2908004621823900" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:300px;height:250px"
+                 data-ad-client="ca-pub-2908004621823900"
+                 data-ad-slot="3799886389"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        -->
+
+        <!-- 👑 【神アドオン】データ更新日の表示エリア -->
+        <div id="dataDate" style="text-align:center; font-size:0.85rem; font-weight:bold; color:var(--text-sub); margin-top:30px; margin-bottom:30px;"></div>
+    </div>
+
+    <button id="btnTop" class="btn-top" onclick="scrollToTop()">↑</button>
+
+    <script>
+        const PREFECTURE_OFFICES = [
+            { name: "北海道", slug: "hokkaido", lat: 43.0642, lon: 141.3469 },
+            { name: "青森県", slug: "aomori", lat: 40.8244, lon: 140.7400 },
+            { name: "岩手県", slug: "iwate", lat: 39.7036, lon: 141.1527 },
+            { name: "宮城県", slug: "miyagi", lat: 38.2682, lon: 140.8721 },
+            { name: "秋田県", slug: "akita", lat: 39.7186, lon: 140.1024 },
+            { name: "山形県", slug: "yamagata", lat: 38.2404, lon: 140.3633 },
+            { name: "福島県", slug: "fukushima", lat: 37.7503, lon: 140.4676 },
+            { name: "茨城県", slug: "ibaraki", lat: 36.3418, lon: 140.4468 },
+            { name: "栃木県", slug: "tochigi", lat: 36.5657, lon: 139.8836 },
+            { name: "群馬県", slug: "gunma", lat: 36.3911, lon: 139.0608 },
+            { name: "埼玉県", slug: "saitama", lat: 35.8569, lon: 139.6489 },
+            { name: "千葉県", slug: "chiba", lat: 35.6047, lon: 140.1232 },
+            { name: "東京都", slug: "tokyo", lat: 35.6895, lon: 139.6917 },
+            { name: "神奈川県", slug: "kanagawa", lat: 35.4478, lon: 139.6425 },
+            { name: "新潟県", slug: "niigata", lat: 37.9026, lon: 139.0232 },
+            { name: "富山県", slug: "toyama", lat: 36.6953, lon: 137.2113 },
+            { name: "石川県", slug: "ishikawa", lat: 36.5947, lon: 136.6256 },
+            { name: "福井県", slug: "fukui", lat: 36.0652, lon: 136.2216 },
+            { name: "山梨県", slug: "yamanashi", lat: 35.6642, lon: 138.5685 },
+            { name: "長野県", slug: "nagano", lat: 36.6513, lon: 138.1810 },
+            { name: "岐阜県", slug: "gifu", lat: 35.3912, lon: 136.7223 },
+            { name: "静岡県", slug: "shizuoka", lat: 34.9769, lon: 138.3831 },
+            { name: "愛知県", slug: "aichi", lat: 35.1802, lon: 136.9066 },
+            { name: "三重県", slug: "mie", lat: 34.7303, lon: 136.5086 },
+            { name: "滋賀県", slug: "shiga", lat: 35.0045, lon: 135.8686 },
+            { name: "京都府", slug: "kyoto", lat: 35.0210, lon: 135.7556 },
+            { name: "大阪府", slug: "osaka", lat: 34.6862, lon: 135.5201 },
+            { name: "兵庫県", slug: "hyogo", lat: 34.6913, lon: 135.1830 },
+            { name: "奈良県", slug: "nara", lat: 34.6853, lon: 135.8327 },
+            { name: "和歌山県", slug: "wakayama", lat: 34.2260, lon: 135.1675 },
+            { name: "鳥取県", slug: "tottori", lat: 35.5039, lon: 134.2378 },
+            { name: "島根県", slug: "shimane", lat: 35.4723, lon: 133.0505 },
+            { name: "岡山県", slug: "okayama", lat: 34.6618, lon: 133.9344 },
+            { name: "広島県", slug: "hiroshima", lat: 34.3966, lon: 132.4596 },
+            { name: "山口県", slug: "yamaguchi", lat: 34.1859, lon: 131.4714 },
+            { name: "徳島県", slug: "tokushima", lat: 34.0658, lon: 134.5593 },
+            { name: "香川県", slug: "kagawa", lat: 34.3401, lon: 134.0434 },
+            { name: "愛媛県", slug: "ehime", lat: 33.8417, lon: 132.7661 },
+            { name: "高知県", slug: "kochi", lat: 33.5597, lon: 133.5311 },
+            { name: "福岡県", slug: "fukuoka", lat: 33.6064, lon: 130.4181 },
+            { name: "佐賀県", slug: "saga", lat: 33.2494, lon: 130.2988 },
+            { name: "長崎県", slug: "nagasaki", lat: 32.7448, lon: 129.8737 },
+            { name: "熊本県", slug: "kumamoto", lat: 32.7898, lon: 130.7417 },
+            { name: "大分県", slug: "oita", lat: 33.2382, lon: 131.6126 },
+            { name: "宮崎県", slug: "miyazaki", lat: 31.9111, lon: 131.4239 },
+            { name: "鹿児島県", slug: "kagoshima", lat: 31.5602, lon: 130.5581 },
+            { name: "沖縄県", slug: "okinawa", lat: 26.2124, lon: 127.6809 },
+        ];
+
+        let allData = [];
+        let displayData = [];
+        let currentIndex = 0;
+        const ITEMS_PER_PAGE = 10;
+        
+        let currentLat = null;
+        let currentLon = null;
+
+        // 👑 【神アドオン】お気に入りリストをローカルストレージから取得（オブジェクトとして保持）
+        let favorites = JSON.parse(localStorage.getItem('care_favorites_v2')) || [];
+
+        async function fetchSelectedData(prefSlug) {
+            if (!prefSlug) {
+                alert("都道府県を選択してください。");
+                return false;
+            }
+            document.getElementById('results').innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 20px;">📡 データを取得中...</div>`;
+
+            let serviceKeys = [];
+            if(document.getElementById('chk-houmon-kaigo').checked) serviceKeys.push('houmon_kaigo');
+            if(document.getElementById('chk-houmon-kango').checked) serviceKeys.push('houmon_kango');
+            if(document.getElementById('chk-fukushi-yogu').checked) serviceKeys.push('fukushi_yogu');
+            if(document.getElementById('chk-short-stay').checked) serviceKeys.push('short_stay');
+            if(document.getElementById('chk-kyotaku').checked) serviceKeys.push('kyotaku');
+
+            if (serviceKeys.length === 0) {
+                alert("検索するサービスを1つ以上選択してください。");
+                document.getElementById('results').innerHTML = "";
+                return false;
+            }
+
+            const filesToFetch = serviceKeys.map(key => `data_${key}_${prefSlug}.json`);
+
+            allData = [];
+            try {
+                const fetchPromises = filesToFetch.map(file => fetch('./' + file).then(res => {
+                    if (!res.ok) throw new Error("File not found: " + file);
+                    return res.json();
+                }));
+                const resultsArray = await Promise.allSettled(fetchPromises);
+
+                let successCount = 0;
+                resultsArray.forEach(result => {
+                    if (result.status === "fulfilled" && Array.isArray(result.value)) {
+                        allData = allData.concat(result.value);
+                        successCount++;
+                    }
+                });
+
+                if (successCount === 0) { throw new Error("All fetches failed"); }
+                return true;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `<div style="text-align: center; color: #dc2626;">データの読み込みに失敗しました。この都道府県のデータがまだない可能性があります。</div>`;
+                return false;
+            }
+        }
+
+        function findNearestPrefecture(userLat, userLon) {
+            let nearest = null;
+            let minDist = Infinity;
+            for (const pref of PREFECTURE_OFFICES) {
+                const d = calculateDistance(userLat, userLon, pref.lat, pref.lon);
+                if (d < minDist) { minDist = d; nearest = pref; }
+            }
+            return nearest;
+        }
+
+        async function sortByGPS() {
+            if (!navigator.geolocation) {
+                alert("お使いの端末はGPS機能に対応していません。");
+                return;
+            }
+            document.getElementById('results').innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 20px;">📍 現在地を取得中...</div>`;
+            document.getElementById('moreContainer').style.display = 'none';
+
+            navigator.geolocation.getCurrentPosition(async position => {
+                currentLat = position.coords.latitude;
+                currentLon = position.coords.longitude;
+
+                const nearestPref = findNearestPrefecture(currentLat, currentLon);
+                document.getElementById('prefSelect').value = nearestPref.slug;
+
+                const success = await fetchSelectedData(nearestPref.slug);
+                if (!success) return;
+
+                applyGPSFilter(); // 👑 距離フィルターを適用して表示
+            }, error => {
+                alert("位置情報が取得できませんでした。都道府県を選んで検索窓をご利用ください。");
+                document.getElementById('results').innerHTML = "";
+            });
+        }
+
+        // 👑 【神アドオン】距離絞り込み処理
+        function applyGPSFilter() {
+            if(!currentLat || !currentLon || allData.length === 0) return;
+            
+            const radiusLimit = parseFloat(document.getElementById('radiusSelect').value);
+            
+            displayData = allData.map(item => {
+                const dist = calculateDistance(currentLat, currentLon, item.lat, item.lon);
+                return { ...item, distance: dist };
+            }).filter(item => {
+                if (radiusLimit === 0) return true;
+                return item.distance <= radiusLimit;
+            });
+            
+            displayData.sort((a, b) => a.distance - b.distance);
+            currentIndex = 0;
+            document.getElementById('results').innerHTML = "";
+            showMore();
+        }
+
+        async function searchByKeyword() {
+            const keyword = document.getElementById('searchInput').value.trim().normalize("NFKC").toLowerCase();
+            const prefSlug = document.getElementById('prefSelect').value;
+
+            if (!prefSlug) { alert("先に都道府県を選択してください。"); return; }
+            if (!keyword) { alert("検索キーワードを入力してください。"); return; }
+
+            const success = await fetchSelectedData(prefSlug);
+            if(!success) return;
+
+            // 👑 【神アドオン】郵便番号(postal_code)も検索対象に含める
+            displayData = allData.filter(item => {
+                const addressStr = (item.address || "").normalize("NFKC").toLowerCase();
+                const nameStr = (item.name || "").normalize("NFKC").toLowerCase();
+                const kanaStr = (item.name_kana || "").normalize("NFKC").toLowerCase();
+                const postalStr = (item.postal_code || "").normalize("NFKC").toLowerCase();
+                return addressStr.includes(keyword) || nameStr.includes(keyword) || kanaStr.includes(keyword) || postalStr.includes(keyword);
+            }).map(item => ({ ...item, distance: null }));
+
+            currentIndex = 0;
+            document.getElementById('results').innerHTML = "";
+
+            if (displayData.length === 0) {
+                document.getElementById('results').innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 20px;">「${keyword}」に一致する施設は見つかりませんでした。</div>`;
+                document.getElementById('moreContainer').style.display = 'none';
+            } else {
+                showMore();
+            }
+        }
+
+        function handleEnter(e) { if (e.key === 'Enter') searchByKeyword(); }
+
+        function sanitize(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // 👑 【神アドオン】お気に入り追加・削除機能
+        function toggleFavorite(id, name, type, address, tel, url) {
+            const index = favorites.findIndex(fav => fav.id === id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                alert(`「${name}」をお気に入りから外しました。`);
+            } else {
+                favorites.push({ id, name, type, address, tel, url });
+                alert(`「${name}」をお気に入りに追加しました！\n上部の「CSV出力」ボタンからExcelで管理できます。`);
+            }
+            localStorage.setItem('care_favorites_v2', JSON.stringify(favorites));
+            
+            // スクロール飛びを防ぐため、対象の星ボタンの色だけを直接更新
+            const btn = document.getElementById('fav-btn-' + id);
+            if (btn) {
+                btn.style.color = (index > -1) ? "#cbd5e1" : "#f59e0b";
+            }
+        }
+
+        // 👑 【神アドオン】お気に入りCSV出力機能
+        function exportFavoritesToCSV() {
+            if (favorites.length === 0) { alert("現在、お気に入りに登録されている施設はありません。\n各施設の「★」マークを押して追加してください。"); return; }
+            
+            const header = ["施設名", "サービス種別", "住所", "電話番号", "HP URL"];
+            const rows = favorites.map(item => [
+                item.name, item.type, item.address, item.tel, item.url
+            ]);
+            
+            const csvContent = [header, ...rows]
+                .map(row => row.map(v => `"${(v||'').replace(/"/g,'""')}"`).join(","))
+                .join("\n");
+            
+            const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+            const urlObj = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = urlObj; a.download = "お気に入りケア事業所リスト.csv"; a.click();
+        }
+
+        function showMore() {
+            const resultsDiv = document.getElementById('results');
+            const limit = Math.min(currentIndex + ITEMS_PER_PAGE, displayData.length);
+
+            for (let i = currentIndex; i < limit; i++) {
+                const item = displayData[i];
+                
+                const sName = sanitize(item.name);
+                const sAddress = sanitize(item.address);
+                const sPostal = sanitize(item.postal_code);
+                const sTel = sanitize(item.tel);
+                const sTimeWeekday = sanitize(item.time_weekday);
+                const sTimeSaturday = sanitize(item.time_saturday);
+                const sTimeSunday = sanitize(item.time_sunday);
+                const sTimeHoliday = sanitize(item.time_holiday);
+                const sDayOff = sanitize(item.day_off);
+                const sNotes = sanitize(item.notes);
+                const sCapacity = sanitize(item.capacity);
+
+                const card = document.createElement('div');
+                card.className = "card";
+                
+                let distanceHtml = "";
+                if (item.distance !== null) {
+                    distanceHtml = `<div class="distance-badge">📍 ここから約 ${item.distance.toFixed(1)} km</div>`;
+                    if (item.is_approximate) {
+                        distanceHtml += `<span class="approx-note">※正確な座標がないため、市役所等からの目安距離です</span>`;
+                    }
+                }
+
+                let tagClass = "tag-default";
+                if (item.service_type === "訪問介護") tagClass = "tag-houmon-kaigo";
+                else if (item.service_type === "訪問看護") tagClass = "tag-houmon-kango";
+                else if (item.service_type === "福祉用具貸与") tagClass = "tag-fukushi-yogu";
+                else if (item.service_type === "短期入所生活介護") tagClass = "tag-short-stay";
+                else if (item.service_type === "居宅介護支援") tagClass = "tag-kyotaku";
+
+                let telHtml = "";
+                if (item.tel_clean && item.tel_clean.length > 0) {
+                    telHtml = `<p>📞 電話: <a href="tel:${item.tel_clean}" class="tel-link">${sTel}</a></p>`;
+                } else {
+                    telHtml = `<p style="color: var(--text-sub);">📞 電話番号情報なし</p>`;
+                }
+                
+                // 👑 【神アドオン】お気に入りボタンの生成
+                const uniqueId = sanitize(item.name + (item.tel_clean || ''));
+                const isFav = favorites.some(fav => fav.id === uniqueId);
+                const starColor = isFav ? "#f59e0b" : "#cbd5e1";
+                const favBtnHtml = `<button id="fav-btn-${uniqueId}" class="fav-btn" onclick="toggleFavorite('${uniqueId}', '${sName}', '${item.service_type}', '${sAddress}', '${sTel}', '${sanitize(item.url)}')" style="background:none; border:none; color:${starColor}; font-size:1.8rem; cursor:pointer; padding:0; line-height:1;">★</button>`;
+
+                const hasHp = item.url && item.url.startsWith("http");
+                let titleHtml = "";
+                if (hasHp) {
+                    let hpBadge = `<a href="${item.url}" target="_blank" rel="noopener noreferrer" style="background-color: #10b981; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 8px; text-decoration: none; display: inline-block;">HPあり</a>`;
+                    titleHtml = `<h3 style="margin-top:5px; margin-bottom:5px; display:flex; align-items:center; flex-wrap:wrap; justify-content:space-between;"><span style="display:flex; align-items:center; flex-wrap:wrap;"><a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color: var(--main-blue); text-decoration: underline;">🏠 ${sName}</a> ${hpBadge}</span> ${favBtnHtml}</h3>`;
+                } else {
+                    let hpBadge = `<span style="background-color: #94a3b8; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 8px; display: inline-block;">HPなし</span>`;
+                    titleHtml = `<h3 style="margin-top:5px; margin-bottom:5px; display:flex; align-items:center; flex-wrap:wrap; justify-content:space-between;"><span style="display:flex; align-items:center; flex-wrap:wrap;">🏠 ${sName} ${hpBadge}</span> ${favBtnHtml}</h3>`;
+                }
+
+                const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map_address || item.address)}`;
+                
+                // 郵便番号(sPostal)を住所の前に表示
+                const postalHtml = sPostal ? `〒${sPostal} ` : "";
+
+                const detailHtml = `
+                <details class="facility-details">
+                    <summary>🕒 開所時間・定員などの詳細を見る ▼</summary>
+                    <div class="detail-content">
+                        <p><strong>【平日】</strong> ${sTimeWeekday || '記載なし'}</p>
+                        <p><strong>【土曜】</strong> ${sTimeSaturday || '記載なし'}</p>
+                        <p><strong>【日曜】</strong> ${sTimeSunday || '記載なし'}</p>
+                        <p><strong>【祝日】</strong> ${sTimeHoliday || '記載なし'}</p>
+                        <p><strong>【定休日】</strong> ${sDayOff || '記載なし'}</p>
+                        <p><strong>【定員】</strong> ${sCapacity ? sCapacity + '名' : '記載なし'}</p>
+                        <p><strong>【特記事項】</strong><br>${sNotes || '特になし'}</p>
+                    </div>
+                </details>
+                `;
+
+                card.innerHTML = `
+                    ${distanceHtml}<br>
+                    <span class="service-tag ${tagClass}">${item.service_type}</span>
+                    ${titleHtml}
+                    <p style="margin-top: 8px;">📍 ${postalHtml}${sAddress} <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #4285f4; color: white; padding: 2px 7px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-decoration: none; margin-left: 6px; display: inline-block;">🗺 地図</a></p>
+                    ${telHtml}
+                    ${detailHtml}
+                `;
+                resultsDiv.appendChild(card);
+            }
+
+            currentIndex = limit;
+            document.getElementById('moreContainer').style.display = (currentIndex < displayData.length) ? 'block' : 'none';
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        window.onscroll = function() {
+            const btnTop = document.getElementById("btnTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btnTop.style.display = "flex";
+            } else {
+                btnTop.style.display = "none";
+            }
+        };
+
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        
+        window.onload = () => {
+            const sel = document.getElementById('prefSelect');
+            PREFECTURE_OFFICES.forEach(pref => {
+                const opt = document.createElement('option');
+                opt.value = pref.slug;
+                opt.textContent = pref.name;
+                sel.appendChild(opt);
+            });
+            document.getElementById('results').innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 20px; background: white; border-radius: 8px;">準備完了です。上のボタンから探してください。</div>`;
+
+            // 👑 【神アドオン】データ更新日の取得と表示
+            fetch('./data_manifest.json')
+                .then(r => {
+                    if(!r.ok) throw new Error("Manifest not found");
+                    return r.json();
+                })
+                .then(m => {
+                    if (m.built_at) {
+                        document.getElementById('dataDate').textContent = `🔄 行政データ最終更新日：${m.built_at}`;
+                    }
+                })
+                .catch(e => console.log("Manifest info not available yet."));
+        };
+    </script>
+</body>
+</html>
