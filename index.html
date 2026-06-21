@@ -464,7 +464,7 @@
                 
                 // 👑 【修正】問題2: ID生成ロジックの修正
                 const rawId = item.name + (item.tel_clean || '');
-                const uniqueId = rawId.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 0).toString().replace('-', 'n');
+                const uniqueId = rawId.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 0).toString().replace(/-/g, 'n');
                 
                 const isFav = favorites.some(fav => fav.id === uniqueId);
                 const starColor = isFav ? "#f59e0b" : "#cbd5e1";
