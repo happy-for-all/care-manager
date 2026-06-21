@@ -71,16 +71,12 @@ PREFECTURE_OFFICES = {
 }
 
 MUNICIPAL_COORDS = {
-    # 主要都市フォールバック用（既存流用、長くなるため省略せず記載）
     "大阪市": {"lat": 34.6937, "lon": 135.5022}, "堺市": {"lat": 34.5714, "lon": 135.4807},
     "東大阪市": {"lat": 34.6793, "lon": 135.5999}, "京都市": {"lat": 35.0116, "lon": 135.7680},
     "神戸市": {"lat": 34.6901, "lon": 135.1955}, "千代田区": {"lat": 35.6940, "lon": 139.7536},
     "横浜市": {"lat": 35.4478, "lon": 139.6425}, "さいたま市": {"lat": 35.8617, "lon": 139.6455},
-    # 必要に応じて追加可能
 }
 
-# 👑 【アドオン】ケアマネ向けの対象ファイル定義
-# 📝 TODO: ダウンロードした厚労省データのファイル名に合わせて「zip_file」の値を変更してください。
 SERVICE_DEFINITIONS = [
     {
         "zip_file": "houmon_kaigo_placeholder.zip", 
@@ -160,17 +156,14 @@ def run_build():
     print(f"🌸 まごころケアマネ支援ナビ 自動ビルド開始")
     print("==========================================")
 
-    dist_root = "dist"
-    if os.path.exists(dist_root):
-        shutil.rmtree(dist_root)
-    
     target_dir = "dist"
+    if os.path.exists(target_dir):
+        shutil.rmtree(target_dir)
     os.makedirs(target_dir, exist_ok=True)
     
     summary_logs = []
     manifest = {}   
 
-    # 👑 【アドオン】データ更新日の追加
     manifest["built_at"] = datetime.datetime.now().strftime("%Y年%m月%d日")
 
     for srv_def in SERVICE_DEFINITIONS:
@@ -227,7 +220,6 @@ def run_build():
             name = safe_get(row, ["事業所の名称", "事業所名称"])
             name_kana = safe_get(row, ["事業所の名称_かな", "事業所名称_かな", "フリガナ", "ふりがな"])
             
-            # 👑 【アドオン】郵便番号の取得
             postal_code = safe_get(row, ["事業所郵便番号", "郵便番号"])
             if postal_code:
                 postal_code = re.sub(r'[^0-9\-]', '', postal_code)
@@ -242,7 +234,8 @@ def run_build():
             address = city + address_detail
 
             raw_tel = safe_get(row, ["事業所電話番号", "事業所連絡先", "電話番号"])
-            tel_clean = re.sub(r'[^0-9\-]', '', raw_tel.translate(str.maketrans('０１２３４５６７８９', '0123456789')))
+            # 👑 【修正】問題3: 空文字の安全な処理
+            tel_clean = re.sub(r'[^0-9\-]', '', raw_tel.translate(str.maketrans('０１２３４５６７８９', '0123456789'))) if raw_tel else ""
 
             raw_lat = safe_get(row, ["事業所緯度", "緯度"])
             raw_lon = safe_get(row, ["事業所経度", "経度"])
@@ -300,7 +293,7 @@ def run_build():
                 "name": name,
                 "name_kana": name_kana,
                 "service_type": service_name,
-                "postal_code": postal_code, # 👑 郵便番号アドオン
+                "postal_code": postal_code, 
                 "address": address,
                 "map_address": extract_map_address(address),
                 "tel": raw_tel,
