@@ -17,6 +17,10 @@ import datetime
 
 COORD_OVERRIDES = {}
 
+# 👑 データの時点（厚労省「介護サービス情報公表システム」オープンデータ）
+#    CSVを新しいものに差し替えたときは、この1行も書き換えてください。
+DATA_AS_OF = "2026年6月末時点（厚生労働省「介護サービス情報公表システム」オープンデータ）"
+
 PREFECTURE_OFFICES = {
     "北海道": {"slug": "hokkaido", "lat": 43.0642, "lon": 141.3469}, "青森県": {"slug": "aomori", "lat": 40.8244, "lon": 140.7400},
     "岩手県": {"slug": "iwate", "lat": 39.7036, "lon": 141.1527}, "宮城県": {"slug": "miyagi", "lat": 38.2682, "lon": 140.8721},
@@ -139,6 +143,8 @@ def run_build():
     manifest = {}   
 
     manifest["built_at"] = datetime.datetime.now().strftime("%Y年%m月%d日")
+    # 👑 データそのものの時点（CSVを新しくしたら、ここを書き換えてください）
+    manifest["data_as_of"] = DATA_AS_OF
 
     for srv_def in SERVICE_DEFINITIONS:
         file_name = srv_def["file_name"]

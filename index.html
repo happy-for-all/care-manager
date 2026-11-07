@@ -81,6 +81,12 @@
         .donation-title { color: var(--main-green); font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
         .donation-text { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 20px; text-align: left; line-height: 1.7; }
         .btn-donation { display: inline-block; background-color: #ff9900; color: white; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 0.95rem; }
+        /* 👑 地域の一覧ページ（ガイド）への案内（2026-11） */
+        .guide-banner { background-color: #ecfdf5; border: 1.5px solid #6ee7b7; padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; color: var(--text-main); }
+        .guide-banner-text { margin-bottom: 8px; line-height: 1.6; }
+        .guide-banner-links { display: flex; flex-wrap: wrap; gap: 8px; }
+        .guide-banner-links a { display: inline-block; background-color: var(--main-green); color: #ffffff; padding: 8px 12px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem; }
+        .guide-banner-links a:hover, .guide-banner-links a:focus { background-color: #047857; }
     </style>
 </head>
 <body>
@@ -91,6 +97,15 @@
         <div class="disclaimer">
             <strong>【プロ向け・業務支援ツール】</strong><br>
             担当する患者様・利用者様の「ご自宅」から近い訪問系サービスやショートステイを、横断してGPS検索できます。※距離ソートを利用するには端末の位置情報をONにしてください。
+        </div>
+
+        <div class="guide-banner">
+            <div class="guide-banner-text">🗾 <strong>地域の一覧ページ</strong>からも探せます（市町村・駅ごと）</div>
+            <div class="guide-banner-links">
+                <a href="https://for-welfare.pray-power-is-god-and-cocoro.com/helper/">近畿の訪問介護（ヘルパー）</a>
+                <a href="https://for-welfare.pray-power-is-god-and-cocoro.com/kango/">近畿の訪問看護</a>
+                <a href="https://for-welfare.pray-power-is-god-and-cocoro.com/kaigo/">大阪府の居宅介護支援</a>
+            </div>
         </div>
 
         <button class="btn-csv" onclick="exportFavoritesToCSV()">⭐ お気に入り施設をCSV出力する（Excel用）</button>
@@ -561,8 +576,10 @@
                     return r.json();
                 })
                 .then(m => {
-                    if (m.built_at) {
-                        document.getElementById('dataDate').textContent = `🔄 行政データ最終更新日：${m.built_at}`;
+                    if (m.data_as_of) {
+                        document.getElementById('dataDate').textContent = `📅 データ：${m.data_as_of}` + (m.built_at ? `／🔄 ツール更新日：${m.built_at}` : "");
+                    } else if (m.built_at) {
+                        document.getElementById('dataDate').textContent = `🔄 ツール更新日：${m.built_at}`;
                     }
                 })
                 .catch(e => console.log("Manifest info not available yet."));
